@@ -44,7 +44,7 @@ disruptions %>%
 
 ```{r}
 disruptions %>%
-    filter(confidence > .9) %>%
+    filter(confidence > .95) %>%
     ggplot(aes(x = disruption_mean)) +
     stat_ecdf(geom = "line") +
     labs(
@@ -53,7 +53,7 @@ disruptions %>%
     )
 
 disruptions %>%
-    filter(confidence >= .9, outdegree > 0) %>%
+    filter(confidence >= .95, outdegree > 0) %>%
     ggplot(aes(x = disruption_mean)) +
     geom_density(fill = "#F58A07", alpha = .6) +
     labs(
@@ -64,7 +64,7 @@ disruptions %>%
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9, outdegree > 3) %>%
+    filter(confidence >= .95, outdegree > 3) %>%
     summarise(
         cor_d_i = cor(disruption_mean, indegree, method = "kendall"),
         cor_d_o = cor(disruption_mean, outdegree, method = "kendall")
@@ -81,7 +81,7 @@ disruptions %>%
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9, outdegree >= 3) %>%
+    filter(confidence >= .95, outdegree >= 3) %>%
     ggplot(aes(x = earliest_decade, y = disruption_mean, group = earliest_decade)) +
     geom_boxplot(coef = 1e3) +
     geom_jitter(width = .9, alpha = .4, color = "salmon", size = .7)
@@ -91,7 +91,7 @@ disruptions %>%
 ```{r}
 disruptions %>%
     mutate(abs_disruption = abs(disruption_mean)) %>%
-    filter(confidence >= .9,
+    filter(confidence >= .95,
            indegree >= 3,
            outdegree >= 3,
            abs_disruption > .05,
@@ -120,7 +120,7 @@ With at least 3 in, 3 out connections
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9, outdegree >= 3, earliest_decade >= 1930) %>%
+    filter(confidence >= .95, outdegree >= 3, earliest_decade >= 1930) %>%
     arrange(desc(disruption_mean)) %>%
     slice(1:20) %>%
     kable()
@@ -130,7 +130,7 @@ Among those for which All Music has a detailed influence profile
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9, outdegree >= 10, earliest_decade >= 1930) %>%
+    filter(confidence >= .95, outdegree >= 10, earliest_decade >= 1930) %>%
     arrange(desc(disruption_mean)) %>%
     slice(1:20) %>%
     kable()
@@ -140,7 +140,7 @@ And the influentials:
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9,
+    filter(confidence >= .95,
            outdegree >= 3,
            indegree >= 200,
            earliest_decade >= 1950) %>%
@@ -158,7 +158,7 @@ These don't seem very relevant to mention.
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9, outdegree >= 3, earliest_decade >= 1950) %>%
+    filter(confidence >= .95, outdegree >= 3, earliest_decade >= 1950) %>%
     arrange((disruption_mean)) %>%
     slice(1:20) %>%
     kable()
@@ -168,7 +168,7 @@ Among those for which All Music has a detailed influence profile
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9, outdegree >= 10, earliest_decade >= 1950) %>%
+    filter(confidence >= .95, outdegree >= 10, earliest_decade >= 1950) %>%
     arrange((disruption_mean)) %>%
     slice(1:20) %>%
     kable()
@@ -178,7 +178,7 @@ And the influentials:
 
 ```{r}
 disruptions %>%
-    filter(confidence >= .9,
+    filter(confidence >= .95,
            outdegree >= 3,
            indegree >= 100,
            earliest_decade >= 1950) %>%
