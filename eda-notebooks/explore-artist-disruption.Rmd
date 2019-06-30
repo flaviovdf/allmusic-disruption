@@ -1,0 +1,227 @@
+---
+title: "EDA on artist disruption"
+date: "06/04/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# https://coolors.co/561d25-7d869c-ce8147-b4c4ae-e5e8b6
+library(tidyverse)
+library(gridExtra)
+library(tidygraph)
+library(ggraph)
+theme_set(theme_bw())
+library(knitr)
+```
+
+
+```{r}
+load(here::here("/data/influence_network.RData"))
+disruptions = read_csv(here::here("data/artist-disruptions_summarized.csv"))
+degrees = read_csv(here::here("data/artist-network-degrees.csv"))
+
+disruptions = disruptions %>%
+    left_join(degrees, by = c("id" = "label", "name"))
+```
+
+
+```{r}
+skimr::skim(disruptions)
+```
+
+```{r}
+disruptions %>%
+    filter(outdegree > 0) %>%
+    ggplot(aes(x = confidence, y = disruption_mean)) +
+    geom_point(size = .8, alpha = .4, color = "#F58A07")
+
+disruptions %>%
+    filter(outdegree > 0) %>%
+    ggplot(aes(x = confidence)) +
+    geom_density(fill = "salmon")
+```
+
+```{r}
+disruptions %>%
+    filter(confidence > .9) %>%
+    ggplot(aes(x = disruption_mean)) +
+    stat_ecdf(geom = "line") +
+    labs(
+        x = "D",
+        y = "P(x < D)"
+    )
+
+disruptions %>%
+    filter(confidence >= .9, outdegree > 0) %>%
+    ggplot(aes(x = disruption_mean)) +
+    geom_density(fill = "#F58A07", alpha = .6) +
+    labs(
+        x = "D",
+        y = "Density"
+    )
+```
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9, outdegree > 3) %>%
+    summarise(
+        cor_d_i = cor(disruption_mean, indegree, method = "kendall"),
+        cor_d_o = cor(disruption_mean, outdegree, method = "kendall")
+    )
+```
+
+```{r}
+disruptions %>%
+    filter(outdegree > 3) %>%
+    ggplot(aes(x = earliest_decade, y = confidence, group = earliest_decade)) +
+    geom_boxplot(coef = 1e3)
+```
+
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9, outdegree >= 3) %>%
+    ggplot(aes(x = earliest_decade, y = disruption_mean, group = earliest_decade)) +
+    geom_boxplot(coef = 1e3) +
+    geom_jitter(width = .9, alpha = .4, color = "salmon", size = .7)
+```
+
+
+```{r}
+disruptions %>%
+    mutate(abs_disruption = abs(disruption_mean)) %>%
+    filter(confidence >= .9,
+           indegree >= 3,
+           outdegree >= 3,
+           abs_disruption > .05,
+           earliest_decade >= 1950) %>%
+    ggplot(aes(
+        x = indegree,
+        y = outdegree,
+        size = abs_disruption,
+        color = disruption_mean
+    )) +
+    geom_point(alpha = .6) +
+    scale_x_log10() +
+    scale_y_log10() +
+    scale_color_gradient2(
+        low = "#122338",
+        mid = "#344065",
+        high = "#FF96F6",
+        midpoint = 0
+    )
+
+```
+
+## Most disruptive / destabilizing
+
+With at least 3 in, 3 out connections
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9, outdegree >= 3, earliest_decade >= 1930) %>%
+    arrange(desc(disruption_mean)) %>%
+    slice(1:20) %>%
+    kable()
+```
+
+Among those for which All Music has a detailed influence profile
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9, outdegree >= 10, earliest_decade >= 1930) %>%
+    arrange(desc(disruption_mean)) %>%
+    slice(1:20) %>%
+    kable()
+```
+
+And the influentials:
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9,
+           outdegree >= 3,
+           indegree >= 200,
+           earliest_decade >= 1950) %>%
+    arrange(desc(disruption_mean)) %>%
+    slice(1:20) %>%
+    kable()
+```
+
+
+## Most consolidating
+
+With at least 3 in, 3 out connections.
+
+These don't seem very relevant to mention.
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9, outdegree >= 3, earliest_decade >= 1950) %>%
+    arrange((disruption_mean)) %>%
+    slice(1:20) %>%
+    kable()
+```
+
+Among those for which All Music has a detailed influence profile
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9, outdegree >= 10, earliest_decade >= 1950) %>%
+    arrange((disruption_mean)) %>%
+    slice(1:20) %>%
+    kable()
+```
+
+And the influentials:
+
+```{r}
+disruptions %>%
+    filter(confidence >= .9,
+           outdegree >= 3,
+           indegree >= 100,
+           earliest_decade >= 1950) %>%
+    arrange(disruption_mean) %>%
+    slice(1:20) %>%
+    kable()
+```
+
+
+# Examples
+
+```{r}
+visualize_influences = function(allmusic_id, network, node_info) {
+    create_focal_network(allmusic_id, network, node_info) %>%
+        ggraph(layout = "kk") +
+        # geom_node_point(aes(colour = type, shape = order), size = 4) +
+        geom_edge_link(aes(
+            start_cap = label_rect(node1.name),
+            end_cap = label_rect(node2.name)
+        ),
+        arrow = arrow(length = unit(2, 'mm'))) +
+        geom_node_label(aes(label = name, color = type)) +
+        # geom_node_label(aes(label = name)) +
+        theme_void() +
+        NULL
+
+}
+
+# visualize_influences("mn0000022845", influences, nodes)
+# create_focal_network("mn0000022845", influences, nodes) %>%
+#     activate()
+#
+# create_focal_network("mn0000764636", influences, nodes) %>%
+#     activate(nodes) %>%
+#     as_tibble() %>% View
+#
+# create_focal_network("mn0000754032", influences, nodes) %>%
+#     activate(nodes) %>%
+#     as_tibble() %>% View
+#
+# visualize_influences("mn0001052511", influences, nodes)
+#
+# create_focal_network("mn0000052151", influences, nodes) %>%
+#     activate(nodes) %>%
+#     as_tibble() %>% View
+```
