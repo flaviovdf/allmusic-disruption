@@ -47,7 +47,9 @@ of the graph. It is able to filter based on decades, genres, styles and degree.
 The notebook has information on how to reproduce the results.
 
 One particular R markdown of interest is the `explore-artist-disruption.Rmd`.
-It may be used to explore summarized views of disruption.
+It may be used to explore summarized views of disruption. This is the base
+for many of the plots we provide in the paper. As is, the notebook has
+some interesting analysis that did not fit in the final manuscript.
 
 ## Auxiliary Code and Scripts
 
