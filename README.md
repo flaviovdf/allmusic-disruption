@@ -2,16 +2,15 @@
 
 ## Léame-Mucho
 
-Code and datasets for the all-music disruption paper published @ ISMIR 2019
-
-### For most cases
+Code and datasets for the all-music disruption paper published @ ISMIR 2019.
+For most cases, what you want is as follows:
 
 1. Install the requirements
 1. Run `jupyter notebook`
 1. Open the `./eda-notebooks/Disruption.ipynb`
 1. Play
 
-### Requirements
+## Requirements
 
 Install the following packages. An anaconda release should have everything.
 
@@ -20,7 +19,7 @@ Install the following packages. An anaconda release should have everything.
 1. numpy
 1. pandas
 
-### Data
+## Data
 
 The `data` folder contains all of our datasets. In particular, you are likely
 interested on the `data/artists.json.gz`. This is our full All-Music crawl.
@@ -35,7 +34,7 @@ this notion of most important genres.
 
 The json data file should be self-explanatory.
 
-### Interactive Notebook and Paper Code
+## Interactive Notebook and Paper Code
 
 We have two folders one with Python code and another with R code. One author
 likes Python, the other likes R. That's just how things are. The `code` and
@@ -53,7 +52,7 @@ It may be used to explore summarized views of disruption. This is the base
 for many of the plots we provide in the paper. As is, the notebook has
 some interesting analysis that did not fit in the final manuscript.
 
-### Auxiliary Code and Scripts
+## Auxiliary Code and Scripts
 
 If you just want some scripts and functions to load the data or
 compute disruption in other settings, check the `code` folder. There is
