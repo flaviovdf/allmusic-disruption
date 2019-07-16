@@ -1,6 +1,6 @@
-# Léame-Mucho
+# Quantifying Disruptive Influence in the AllMusic Guide
 
-## Quantifying Disruptive Influence in the AllMusic Guide
+## Léame-Mucho
 
 Code and datasets for the all-music disruption paper published @ ISMIR 2019
 
