@@ -12,12 +12,13 @@ For most cases, what you want is as follows:
 
 ## Requirements
 
-Install the following packages. An anaconda release should have everything.
+Install the following packages with `pip`. An anaconda release should have everything.
 
 1. ipywidgets -- https://ipywidgets.readthedocs.io/en/stable/
 1. matplotlib
 1. numpy
 1. pandas
+1. plac (for the scripts only)
 
 ## Data
 
@@ -27,8 +28,8 @@ It may be loaded using any json reader.
 
 **Iteration order warning:** The json has both lists and maps. Given that
 Python 3.6 maintains insertion order on maps, the information on the file will
-be loaded in the order that it appeared on the All-Music website. This is
-relevant for some features such as genres, the first one is usually the most
+be loaded in the order listed (during crawl) on the the All-Music website. This
+is relevant for some features such as genres. The first one is usually the most
 relevant. If you load the json without maintaining order, you will not have
 this notion of most important genres.
 
